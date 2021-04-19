@@ -1,0 +1,75 @@
+% In order for this script to work the matrix that you want to convert must
+% be stored in patientVectors with one BOP representation per row (patient)
+
+
+%Please update the following line wiht the vars you are using and the
+%methods like 'HR-MAP Stacked', 'HR-MAP Multi' or 'HR-MAP PDTW'
+testing ='HR-MAP Multi'; 
+
+%Please enter YOUR name
+yourName = 'ZAmandaH';
+
+%please enter a nickname for the data set you are using like 'robotMoving',
+%'robotStationary', 'pamap','cmuMocap', 'pda','hypotension'
+dataset = 'hypotension';
+
+[w_TF, w_TFIDF, w_TFIF, w_TFIDFIF, w_TFIDFP] = weighted_TF_IDF_P(patientVectors);
+[neighbors1 dist] = nearestNeighbor(patientVectors);
+disp('BOP');
+[result1,acc1,pre1,rec1,f1] = resultsForHypoNeighborsPR(neighbors1);
+display(horzcat('acc->', num2str(acc1),' pre->',num2str(pre1),' rec->',num2str(rec1),' f->',num2str(f1)));
+[neighbors2 dist] = nearestNeighbor(w_TF);
+disp('TF');
+[result2,acc2,pre2,rec2,f2] = resultsForHypoNeighborsPR(neighbors2);
+display(horzcat('acc->', num2str(acc2),' pre->',num2str(pre2),' rec->',num2str(rec2),' f->',num2str(f2)));
+[neighbors3 dist] = nearestNeighbor(w_TFIDF);
+disp('TFIDF');
+[result3,acc3,pre3,rec3,f3] = resultsForHypoNeighborsPR(neighbors3);
+display(horzcat('acc->', num2str(acc3),' pre->',num2str(pre3),' rec->',num2str(rec3),' f->',num2str(f3)));
+[neighbors4 dist] = nearestNeighbor(w_TFIDFIF);
+disp('TFIDFIF');
+[result4,acc4,pre4,rec4,f4] = resultsForHypoNeighborsPR(neighbors4);
+display(horzcat('acc->', num2str(acc4),' pre->',num2str(pre4),' rec->',num2str(rec4),' f->',num2str(f4)));
+[neighbors5 dist] = nearestNeighbor(w_TFIF);
+disp('TFIF');
+[result5,acc5,pre5,rec5,f5] = resultsForHypoNeighborsPR(neighbors5);
+display(horzcat('acc->', num2str(acc5),' pre->',num2str(pre5),' rec->',num2str(rec5),' f->',num2str(f5)));
+[neighbors6 dist] = nearestNeighbor(w_TFIDFP);
+disp('TFP');
+[result6,acc6,pre6,rec6,f6] = resultsForHypoNeighborsPR(neighbors6);
+display(horzcat('acc->', num2str(acc6),' pre->',num2str(pre6),' rec->',num2str(rec6),' f->',num2str(f6)));
+
+
+
+resultsBoP = [ sliding_window, num_symbols, alphabet_size,NR_opt_SAX, acc1, pre1, rec1, f1];
+resultsTF = [ sliding_window, num_symbols, alphabet_size,NR_opt_SAX, acc2, pre2, rec2, f2];
+resultsTFIDF = [ sliding_window, num_symbols, alphabet_size, NR_opt_SAX,acc3, pre3, rec3, f3];
+resultsTFIDFIF = [ sliding_window, num_symbols, alphabet_size,NR_opt_SAX, acc4, pre4, rec4, f4];
+resultsTFIF = [ sliding_window, num_symbols, alphabet_size,NR_opt_SAX, acc5, pre5, rec5, f5];
+resultsTFP = [ sliding_window, num_symbols, alphabet_size,NR_opt_SAX, acc6, pre6, rec6, f6];
+
+fileID = fopen(horzcat(amanda,'_',BoP, '_results.csv'),'a');
+fprintf(fileID,'%s, %i, %i, %i, %i, %5.2f, %5.2f, %5.2f, %5.2f\n', horzcat(testing , ' BOP'), resultsBoP);
+
+
+fprintf(fileID,'%s, %i, %i, %i, %i, %5.2f, %5.2f, %5.2f, %5.2f\n',horzcat(testing , ' TF'), resultsTF);
+
+fprintf(fileID,'%s, %i, %i, %i, %i, %5.2f, %5.2f, %5.2f, %5.2f\n',horzcat(testing , ' TFIDF'), resultsTFIDF);
+
+fprintf(fileID,'%s, %i, %i, %i, %i, %5.2f, %5.2f, %5.2f, %5.2f\n',horzcat(testing , ' TFIDFIF'), resultsTFIDFIF);
+
+fprintf(fileID,'%s, %i, %i, %i, %i, %5.2f, %5.2f, %5.2f, %5.2f\n',horzcat(testing , ' TFIF'), resultsTFIF);
+
+fprintf(fileID,'%s, %i, %i, %i, %i, %5.2f, %5.2f, %5.2f, %5.2f\n',horzcat(testing , ' TFP'), resultsTFP);
+
+fclose(fileID);
+
+
+fileID2 = fopen(horzcat(amanda,'_', BoP,'_data.csv'),'a');
+fprintf(fileID2,'%s, %i, %i, %i, %i, %i, %i, %i, %i, %i, %i, %i, %i, %i, %i, %i, %i, %i, %i, %i, %i, %i, %i, %i, %i, %i, %i, %i, %i, %i, %i, %i, %i, %i,%i, %i, %i, %i, %i, %i, %i, %i, %i, %i,%i, %i, %i, %i, %i, %i, %i, %i, %i, %i, %i, %i, %i, %i, %i, %i, %i, %i, %i\n', horzcat(testing , ' BoP'),sliding_window, num_symbols, alphabet_size,NR_opt_SAX, result1);
+fprintf(fileID2,'%s, %i, %i, %i, %i, %i, %i, %i, %i, %i, %i, %i, %i, %i, %i, %i, %i, %i, %i, %i, %i, %i, %i, %i, %i, %i, %i, %i, %i, %i, %i, %i, %i, %i,%i, %i, %i, %i, %i, %i, %i, %i, %i, %i,%i, %i, %i, %i, %i, %i, %i, %i, %i, %i, %i, %i, %i, %i, %i, %i, %i, %i, %i\n', horzcat(testing , ' TF'),sliding_window, num_symbols, alphabet_size,NR_opt_SAX, result2);
+fprintf(fileID2,'%s, %i, %i, %i, %i, %i, %i, %i, %i, %i, %i, %i, %i, %i, %i, %i, %i, %i, %i, %i, %i, %i, %i, %i, %i, %i, %i, %i, %i, %i, %i, %i, %i, %i,%i, %i, %i, %i, %i, %i, %i, %i, %i, %i,%i, %i, %i, %i, %i, %i, %i, %i, %i, %i, %i, %i, %i, %i, %i, %i, %i, %i, %i\n', horzcat(testing , ' TFIDF'),sliding_window, num_symbols, alphabet_size,NR_opt_SAX, result3);
+fprintf(fileID2,'%s, %i, %i, %i, %i, %i, %i, %i, %i, %i, %i, %i, %i, %i, %i, %i, %i, %i, %i, %i, %i, %i, %i, %i, %i, %i, %i, %i, %i, %i, %i, %i, %i, %i,%i, %i, %i, %i, %i, %i, %i, %i, %i, %i,%i, %i, %i, %i, %i, %i, %i, %i, %i, %i, %i, %i, %i, %i, %i, %i, %i, %i, %i\n', horzcat(testing , ' TFIDFIF'),sliding_window, num_symbols, alphabet_size,NR_opt_SAX, result4);
+fprintf(fileID2,'%s, %i, %i, %i, %i, %i, %i, %i, %i, %i, %i, %i, %i, %i, %i, %i, %i, %i, %i, %i, %i, %i, %i, %i, %i, %i, %i, %i, %i, %i, %i, %i, %i, %i,%i, %i, %i, %i, %i, %i, %i, %i, %i, %i,%i, %i, %i, %i, %i, %i, %i, %i, %i, %i, %i, %i, %i, %i, %i, %i, %i, %i, %i\n', horzcat(testing , ' TFIF'),sliding_window, num_symbols, alphabet_size,NR_opt_SAX, result5);
+fprintf(fileID2,'%s, %i, %i, %i, %i, %i, %i, %i, %i, %i, %i, %i, %i, %i, %i, %i, %i, %i, %i, %i, %i, %i, %i, %i, %i, %i, %i, %i, %i, %i, %i, %i, %i, %i,%i, %i, %i, %i, %i, %i, %i, %i, %i, %i,%i, %i, %i, %i, %i, %i, %i, %i, %i, %i, %i, %i, %i, %i, %i, %i, %i, %i, %i\n', horzcat(testing , ' TFP'),sliding_window, num_symbols, alphabet_size,NR_opt_SAX, result6);
+fclose (fileID2);
